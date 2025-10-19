@@ -211,7 +211,7 @@ flowchart TD
 ```mermaid
 graph TB
     subgraph Presentation["Presentation Layer"]
-        UI[Console UI<br/>main.cpp<br/>Menus | Input | Output]
+        UI[Console UI<br/>main.cpp<br/>Menus Input Output]
     end
     
     subgraph Business["Business Logic Layer"]
@@ -229,11 +229,12 @@ graph TB
     
     subgraph Persistence["Persistence Layer"]
         FH[FileHandler<br/>save<br/>load<br/>serialize]
-        Files[(Data Files<br/>users.txt<br/>stocks.txt<br/>portfolio_*.txt)]
+        Files[(Data Files<br/>users.txt<br/>stocks.txt<br/>portfolio)]
     end
     
     UI --> TE
     UI --> SE
+    UI --> PS
     UI --> FH
     
     TE --> Stock
