@@ -1,4 +1,5 @@
 #include "Portfolio.h"
+#include "../utils/Colors.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -153,38 +154,56 @@ Position* Portfolio::getPosition(const std::string& symbol) {
 
 void Portfolio::displayPositions() const {
     if (positions.empty()) {
-        std::cout << "No positions in portfolio." << std::endl;
+        std::cout << Colors::WARNING << "No positions in portfolio." << Colors::RESET << std::endl;
         return;
     }
     
-    std::cout << "\n" << std::string(90, '=') << std::endl;
-    std::cout << "PORTFOLIO POSITIONS" << std::endl;
-    std::cout << std::string(90, '=') << std::endl;
+    std::cout << "\n" << Colors::HEADER << std::string(90, '=') << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_CYAN << "PORTFOLIO POSITIONS" << Colors::RESET << std::endl;
+    std::cout << Colors::HEADER << std::string(90, '=') << Colors::RESET << std::endl;
     
-    std::cout << std::left << std::setw(10) << "Symbol"
+    std::cout << Colors::BOLD << std::left << std::setw(10) << "Symbol"
               << std::right << std::setw(10) << "Quantity"
               << std::setw(15) << "Avg Price"
               << std::setw(15) << "Current Val"
               << std::setw(15) << "P&L"
-              << std::setw(12) << "P&L %" << std::endl;
-    std::cout << std::string(90, '-') << std::endl;
+              << std::setw(12) << "P&L %" << Colors::RESET << std::endl;
+    std::cout << Colors::DIM << std::string(90, '-') << Colors::RESET << std::endl;
     
     for (const auto& pair : positions) {
         const Position& pos = pair.second;
         double plPercent = (pos.averagePrice > 0) ? 
             (pos.profitLoss / (pos.quantity * pos.averagePrice)) * 100.0 : 0.0;
         
-        std::cout << std::left << std::setw(10) << pos.symbol
+        std::cout << Colors::BOLD_CYAN << std::left << std::setw(10) << pos.symbol << Colors::RESET
                   << std::right << std::setw(10) << pos.quantity
                   << std::setw(15) << std::fixed << std::setprecision(2) << pos.averagePrice
-                  << std::setw(15) << pos.currentValue
-                  << std::setw(15) << pos.profitLoss
-                  << std::setw(11) << plPercent << "%" << std::endl;
+                  << std::setw(15) << pos.currentValue;
+        
+        // Color code P&L
+        if (pos.profitLoss > 0) {
+            std::cout << Colors::PROFIT << std::setw(15) << Symbols::ARROW_UP << " " << pos.profitLoss
+                      << std::setw(10) << plPercent << "%" << Colors::RESET << std::endl;
+        } else if (pos.profitLoss < 0) {
+            std::cout << Colors::LOSS << std::setw(15) << Symbols::ARROW_DOWN << " " << pos.profitLoss
+                      << std::setw(10) << plPercent << "%" << Colors::RESET << std::endl;
+        } else {
+            std::cout << Colors::DIM << std::setw(15) << pos.profitLoss
+                      << std::setw(11) << plPercent << "%" << Colors::RESET << std::endl;
+        }
     }
     
-    std::cout << std::string(90, '=') << std::endl;
-    std::cout << "Cash Balance: $" << std::fixed << std::setprecision(2) << cashBalance << std::endl;
-    std::cout << "Total P&L: $" << getTotalProfitLoss() << std::endl;
+    std::cout << Colors::HEADER << std::string(90, '=') << Colors::RESET << std::endl;
+    std::cout << Colors::INFO << "Cash Balance: " << Colors::BOLD_WHITE << "$" << std::fixed << std::setprecision(2) << cashBalance << Colors::RESET << std::endl;
+    
+    double totalPL = getTotalProfitLoss();
+    if (totalPL > 0) {
+        std::cout << Colors::PROFIT << "Total P&L: " << Symbols::ARROW_UP << " $" << totalPL << Colors::RESET << std::endl;
+    } else if (totalPL < 0) {
+        std::cout << Colors::LOSS << "Total P&L: " << Symbols::ARROW_DOWN << " $" << totalPL << Colors::RESET << std::endl;
+    } else {
+        std::cout << Colors::INFO << "Total P&L: $" << totalPL << Colors::RESET << std::endl;
+    }
 }
 
 void Portfolio::displayTransactionHistory(int limit) const {

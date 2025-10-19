@@ -91,6 +91,8 @@ trading-application/
 - User authentication (login/register)
 - Role-based access control
 - File-based data persistence
+- **Beautiful colorful console UI with Unicode symbols and emojis**
+- **ANSI color-coded messages for better UX**
 - Clean console UI with formatted tables
 - Input validation and error handling
 

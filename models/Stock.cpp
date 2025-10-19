@@ -1,4 +1,5 @@
 #include "Stock.h"
+#include "../utils/Colors.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -71,11 +72,24 @@ double Stock::getPriceChangePercent() const {
 }
 
 void Stock::display() const {
-    std::cout << std::left << std::setw(8) << symbol
+    double change = getPriceChange();
+    double changePercent = getPriceChangePercent();
+    
+    std::cout << Colors::BOLD_CYAN << std::left << std::setw(8) << symbol << Colors::RESET
               << std::setw(20) << name
-              << std::right << std::setw(10) << std::fixed << std::setprecision(2) << currentPrice
-              << std::setw(12) << getPriceChange()
-              << std::setw(10) << getPriceChangePercent() << "%";
+              << Colors::BOLD_WHITE << std::right << std::setw(10) << std::fixed << std::setprecision(2) << currentPrice << Colors::RESET;
+    
+    // Color code the change
+    if (change > 0) {
+        std::cout << Colors::PROFIT << std::setw(12) << Symbols::ARROW_UP << " " << change
+                  << std::setw(9) << changePercent << "%" << Colors::RESET;
+    } else if (change < 0) {
+        std::cout << Colors::LOSS << std::setw(12) << Symbols::ARROW_DOWN << " " << change
+                  << std::setw(9) << changePercent << "%" << Colors::RESET;
+    } else {
+        std::cout << Colors::DIM << std::setw(12) << "  " << change
+                  << std::setw(9) << changePercent << "%" << Colors::RESET;
+    }
 }
 
 std::string Stock::serialize() const {

@@ -1,4 +1,5 @@
 #include "TradingEngine.h"
+#include "../utils/Colors.h"
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -14,17 +15,17 @@ TradingEngine::TradingEngine() {
 
 void TradingEngine::addStock(const Stock& stock) {
     stocks[stock.getSymbol()] = stock;
-    std::cout << "Stock " << stock.getSymbol() << " added successfully." << std::endl;
+    std::cout << Colors::SUCCESS << Symbols::CHECK << " Stock " << stock.getSymbol() << " added successfully." << Colors::RESET << std::endl;
 }
 
 bool TradingEngine::removeStock(const std::string& symbol) {
     auto it = stocks.find(symbol);
     if (it != stocks.end()) {
         stocks.erase(it);
-        std::cout << "Stock " << symbol << " removed successfully." << std::endl;
+        std::cout << Colors::WARNING << Symbols::CHECK << " Stock " << symbol << " removed successfully." << Colors::RESET << std::endl;
         return true;
     }
-    std::cout << "Stock " << symbol << " not found." << std::endl;
+    std::cout << Colors::ERROR << Symbols::CROSS << " Stock " << symbol << " not found." << Colors::RESET << std::endl;
     return false;
 }
 
@@ -69,9 +70,9 @@ bool TradingEngine::executeBuyOrder(BuyOrder* order, Portfolio& portfolio) {
     
     if (success) {
         order->setStatus("EXECUTED");
-        std::cout << "Buy order executed: " << order->getQuantity() << " shares of " 
-                  << order->getSymbol() << " at $" << std::fixed << std::setprecision(2) 
-                  << currentPrice << std::endl;
+        std::cout << Colors::SUCCESS << Symbols::CHECK << " Buy order executed: " << order->getQuantity() << " shares of " 
+                  << order->getSymbol() << " at " << Colors::BOLD_WHITE << "$" << std::fixed << std::setprecision(2) 
+                  << currentPrice << Colors::RESET << std::endl;
         return true;
     } else {
         order->setStatus("CANCELLED");
@@ -94,9 +95,9 @@ bool TradingEngine::executeSellOrder(SellOrder* order, Portfolio& portfolio) {
     
     if (success) {
         order->setStatus("EXECUTED");
-        std::cout << "Sell order executed: " << order->getQuantity() << " shares of " 
-                  << order->getSymbol() << " at $" << std::fixed << std::setprecision(2) 
-                  << currentPrice << std::endl;
+        std::cout << Colors::SUCCESS << Symbols::CHECK << " Sell order executed: " << order->getQuantity() << " shares of " 
+                  << order->getSymbol() << " at " << Colors::BOLD_WHITE << "$" << std::fixed << std::setprecision(2) 
+                  << currentPrice << Colors::RESET << std::endl;
         return true;
     } else {
         order->setStatus("CANCELLED");
@@ -106,27 +107,27 @@ bool TradingEngine::executeSellOrder(SellOrder* order, Portfolio& portfolio) {
 
 void TradingEngine::displayMarket() const {
     if (stocks.empty()) {
-        std::cout << "No stocks in the market." << std::endl;
+        std::cout << Colors::WARNING << "No stocks in the market." << Colors::RESET << std::endl;
         return;
     }
     
-    std::cout << "\n" << std::string(80, '=') << std::endl;
-    std::cout << "STOCK MARKET" << std::endl;
-    std::cout << std::string(80, '=') << std::endl;
+    std::cout << "\n" << Colors::HEADER << std::string(80, '=') << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_CYAN << "STOCK MARKET" << Colors::RESET << std::endl;
+    std::cout << Colors::HEADER << std::string(80, '=') << Colors::RESET << std::endl;
     
-    std::cout << std::left << std::setw(8) << "Symbol"
+    std::cout << Colors::BOLD << std::left << std::setw(8) << "Symbol"
               << std::setw(20) << "Name"
               << std::right << std::setw(10) << "Price"
               << std::setw(12) << "Change"
-              << std::setw(10) << "Change%" << std::endl;
-    std::cout << std::string(80, '-') << std::endl;
+              << std::setw(10) << "Change%" << Colors::RESET << std::endl;
+    std::cout << Colors::DIM << std::string(80, '-') << Colors::RESET << std::endl;
     
     for (const auto& pair : stocks) {
         pair.second.display();
         std::cout << std::endl;
     }
     
-    std::cout << std::string(80, '=') << std::endl;
+    std::cout << Colors::HEADER << std::string(80, '=') << Colors::RESET << std::endl;
 }
 
 void TradingEngine::displayStockDetails(const std::string& symbol) const {

@@ -13,6 +13,8 @@
 #include "services/StrategyEngine.h"
 #include "utils/FileHandler.h"
 #include "utils/PriceSimulator.h"
+#include "utils/Colors.h"
+#include "utils/Console.h"
 
 // Forward declarations
 void clearScreen();
@@ -42,34 +44,34 @@ void pauseScreen() {
 
 void displayWelcome() {
     clearScreen();
-    std::cout << std::string(60, '=') << std::endl;
-    std::cout << "     WELCOME TO THE TRADING APPLICATION" << std::endl;
-    std::cout << "     Advanced C++ OOP Project" << std::endl;
-    std::cout << std::string(60, '=') << std::endl;
-    std::cout << "\nFeatures:" << std::endl;
-    std::cout << "  - Real-time stock trading simulation" << std::endl;
-    std::cout << "  - Portfolio management" << std::endl;
-    std::cout << "  - Automated trading strategies" << std::endl;
-    std::cout << "  - Transaction history tracking" << std::endl;
-    std::cout << "  - Admin controls for market management" << std::endl;
-    std::cout << std::string(60, '=') << std::endl;
+    std::cout << Colors::BOLD_CYAN << std::string(60, '=') << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_YELLOW << "     WELCOME TO THE TRADING APPLICATION" << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_MAGENTA << "     Advanced C++ OOP Project" << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_CYAN << std::string(60, '=') << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD << "\nFeatures:" << Colors::RESET << std::endl;
+    std::cout << Colors::GREEN << "  " << Symbols::BULLET << " Real-time stock trading simulation" << Colors::RESET << std::endl;
+    std::cout << Colors::GREEN << "  " << Symbols::BULLET << " Portfolio management" << Colors::RESET << std::endl;
+    std::cout << Colors::GREEN << "  " << Symbols::BULLET << " Automated trading strategies" << Colors::RESET << std::endl;
+    std::cout << Colors::GREEN << "  " << Symbols::BULLET << " Transaction history tracking" << Colors::RESET << std::endl;
+    std::cout << Colors::GREEN << "  " << Symbols::BULLET << " Admin controls for market management" << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD_CYAN << std::string(60, '=') << Colors::RESET << std::endl;
 }
 
 // Authentication
 User* authenticateUser(FileHandler& fileHandler) {
     std::string username, password;
     
-    std::cout << "\n=== LOGIN ===" << std::endl;
-    std::cout << "Username: ";
+    std::cout << "\n" << Colors::BOLD_CYAN << "=== LOGIN ===" << Colors::RESET << std::endl;
+    std::cout << Colors::BOLD << "Username: " << Colors::RESET;
     std::cin >> username;
-    std::cout << "Password: ";
+    std::cout << Colors::BOLD << "Password: " << Colors::RESET;
     std::cin >> password;
     
     auto users = fileHandler.loadAllUsers();
     
     for (auto& user : users) {
         if (user->getUsername() == username && user->verifyPassword(password)) {
-            std::cout << "\nLogin successful! Welcome, " << username << std::endl;
+            std::cout << Colors::SUCCESS << "\n" << Symbols::CHECK << " Login successful! Welcome, " << username << Colors::RESET << std::endl;
             
             // Return a pointer to the appropriate user type
             if (user->getRole() == "ADMIN") {
@@ -84,7 +86,7 @@ User* authenticateUser(FileHandler& fileHandler) {
         }
     }
     
-    std::cout << "\nInvalid username or password." << std::endl;
+    std::cout << Colors::ERROR << "\n" << Symbols::CROSS << " Invalid username or password." << Colors::RESET << std::endl;
     return nullptr;
 }
 
@@ -92,39 +94,39 @@ User* registerUser(FileHandler& fileHandler) {
     std::string username, password, confirmPassword;
     int roleChoice;
     
-    std::cout << "\n=== REGISTRATION ===" << std::endl;
-    std::cout << "Username: ";
+    Console::printSectionHeader("REGISTRATION");
+    std::cout << Color::BRIGHT_CYAN << Symbol::USER << " Username: " << Color::RESET;
     std::cin >> username;
     
     if (fileHandler.userExists(username)) {
-        std::cout << "Username already exists!" << std::endl;
+        Console::printError("Username already exists!");
         return nullptr;
     }
     
-    std::cout << "Password: ";
+    std::cout << Color::BRIGHT_CYAN << Symbol::LOCK << " Password: " << Color::RESET;
     std::cin >> password;
-    std::cout << "Confirm Password: ";
+    std::cout << Color::BRIGHT_CYAN << Symbol::LOCK << " Confirm Password: " << Color::RESET;
     std::cin >> confirmPassword;
     
     if (password != confirmPassword) {
-        std::cout << "Passwords do not match!" << std::endl;
+        Console::printError("Passwords do not match!");
         return nullptr;
     }
     
-    std::cout << "\nSelect role:" << std::endl;
-    std::cout << "1. Trader (default)" << std::endl;
-    std::cout << "2. Admin" << std::endl;
-    std::cout << "Choice: ";
+    std::cout << Color::BRIGHT_YELLOW << "\n📋 Select role:" << Color::RESET << std::endl;
+    Console::printMenuOption(1, "Trader (default)", Symbol::TRADER);
+    Console::printMenuOption(2, "Admin", Symbol::ADMIN);
+    std::cout << Color::BRIGHT_CYAN << "\nChoice: " << Color::RESET;
     std::cin >> roleChoice;
     
     User* newUser = nullptr;
     
     if (roleChoice == 2) {
         newUser = new Admin(username, password);
-        std::cout << "\nAdmin account created successfully!" << std::endl;
+        Console::printSuccess("Admin account created successfully! " + Symbol::ADMIN);
     } else {
         newUser = new Trader(username, password, 100000.0);
-        std::cout << "\nTrader account created with $100,000 initial balance!" << std::endl;
+        Console::printSuccess("Trader account created with $100,000 initial balance! " + Symbol::MONEY_BAG);
     }
     
     fileHandler.saveUser(*newUser);
@@ -467,12 +469,12 @@ int main() {
     while (running) {
         displayWelcome();
         
-        std::cout << "\n1. Login" << std::endl;
-        std::cout << "2. Register" << std::endl;
-        std::cout << "3. Exit" << std::endl;
+        Console::printMenuOption(1, "Login", Symbol::KEY);
+        Console::printMenuOption(2, "Register", "📝");
+        Console::printMenuOption(3, "Exit", "👋");
         
         int choice;
-        std::cout << "\nEnter choice: ";
+        std::cout << Color::BRIGHT_YELLOW << "\n" << Symbol::ARROW_RIGHT << " Enter choice: " << Color::RESET;
         std::cin >> choice;
         
         User* currentUser = nullptr;
@@ -514,13 +516,14 @@ int main() {
             
             case 3: { // Exit
                 running = false;
-                std::cout << "\nThank you for using the Trading Application!" << std::endl;
-                std::cout << "Goodbye!" << std::endl;
+                std::cout << Color::BRIGHT_GREEN << "\n" << Symbol::STAR 
+                          << " Thank you for using the Trading Application! " << Symbol::STAR << "\n";
+                std::cout << Symbol::ROCKET << " Goodbye! " << Symbol::ROCKET << Color::RESET << std::endl;
                 break;
             }
             
             default:
-                std::cout << "Invalid choice!" << std::endl;
+                Console::printError("Invalid choice!");
                 pauseScreen();
         }
     }

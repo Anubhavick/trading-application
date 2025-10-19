@@ -1,4 +1,5 @@
 #include "User.h"
+#include "../utils/Console.h"
 #include <iostream>
 #include <sstream>
 
@@ -27,17 +28,21 @@ Admin::Admin(const std::string& username, const std::string& password)
     : User(username, password, "ADMIN") {}
 
 void Admin::displayMenu() const {
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "ADMIN MENU - Welcome, " << username << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    std::cout << "1. View All Stocks" << std::endl;
-    std::cout << "2. Add New Stock" << std::endl;
-    std::cout << "3. Remove Stock" << std::endl;
-    std::cout << "4. Simulate Price Changes" << std::endl;
-    std::cout << "5. View All Users" << std::endl;
-    std::cout << "6. System Statistics" << std::endl;
-    std::cout << "7. Logout" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
+    std::cout << Color::BOLD << Color::BRIGHT_MAGENTA;
+    std::cout << "\n╔════════════════════════════════════════════════╗\n";
+    std::cout << "║  " << Symbol::ADMIN << "  ADMIN MENU - Welcome, " << username << std::string(20 - username.length(), ' ') << "║\n";
+    std::cout << "╚════════════════════════════════════════════════╗\n";
+    std::cout << Color::RESET;
+    
+    Console::printMenuOption(1, "View All Stocks", Symbol::CHART_UP);
+    Console::printMenuOption(2, "Add New Stock", "➕");
+    Console::printMenuOption(3, "Remove Stock", "➖");
+    Console::printMenuOption(4, "Simulate Price Changes", Symbol::FIRE);
+    Console::printMenuOption(5, "View All Users", Symbol::USER);
+    Console::printMenuOption(6, "System Statistics", "📊");
+    Console::printMenuOption(7, "Logout", "🚪");
+    
+    Console::printDivider("═", 50);
 }
 
 void Admin::displayAdminInfo() const {
@@ -67,18 +72,22 @@ Trader::Trader(const std::string& username, const std::string& password, double 
     : User(username, password, "TRADER"), portfolio(username, initialBalance) {}
 
 void Trader::displayMenu() const {
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "TRADER MENU - Welcome, " << username << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    std::cout << "1. View Stock Market" << std::endl;
-    std::cout << "2. Place Buy Order" << std::endl;
-    std::cout << "3. Place Sell Order" << std::endl;
-    std::cout << "4. View Portfolio" << std::endl;
-    std::cout << "5. View Transaction History" << std::endl;
-    std::cout << "6. Run Trading Strategy" << std::endl;
-    std::cout << "7. Account Summary" << std::endl;
-    std::cout << "8. Logout" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
+    std::cout << Color::BOLD << Color::BRIGHT_CYAN;
+    std::cout << "\n╔════════════════════════════════════════════════╗\n";
+    std::cout << "║  " << Symbol::TRADER << "  TRADER MENU - Welcome, " << username << std::string(19 - username.length(), ' ') << "║\n";
+    std::cout << "╚════════════════════════════════════════════════╝\n";
+    std::cout << Color::RESET;
+    
+    Console::printMenuOption(1, "View Stock Market", Symbol::CHART_UP);
+    Console::printMenuOption(2, "Place Buy Order", "🛒");
+    Console::printMenuOption(3, "Place Sell Order", "💸");
+    Console::printMenuOption(4, "View Portfolio", Symbol::MONEY_BAG);
+    Console::printMenuOption(5, "View Transaction History", "📜");
+    Console::printMenuOption(6, "Run Trading Strategy", Symbol::TARGET);
+    Console::printMenuOption(7, "Account Summary", "📊");
+    Console::printMenuOption(8, "Logout", "🚪");
+    
+    Console::printDivider("═", 50);
 }
 
 Portfolio& Trader::getPortfolio() {
